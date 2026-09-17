@@ -234,6 +234,10 @@
             margin-bottom: 30px;
         }
 
+        .m-break {
+            display: inline;
+        }
+
         .hero-actions {
             display: flex;
             align-items: center;
@@ -364,6 +368,8 @@
             min-width: 230px;
             box-shadow: var(--shadow-subtle);
             border: 1px solid rgba(229, 243, 99, 0.4);
+            overflow: hidden;
+            position: relative;
         }
 
         .revenue-card-float .label {
@@ -372,6 +378,8 @@
             color: #555A22;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, filter 0.35s ease;
+            will-change: transform, opacity, filter;
         }
 
         .revenue-card-float .value {
@@ -380,6 +388,23 @@
             color: var(--text-main);
             margin: 4px 0 10px;
             letter-spacing: -1px;
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, filter 0.35s ease;
+            will-change: transform, opacity, filter;
+        }
+
+        .revenue-card-float.slide-out .label,
+        .revenue-card-float.slide-out .value {
+            transform: translateY(-15px) scale(0.92);
+            opacity: 0;
+            filter: blur(4px);
+        }
+
+        .revenue-card-float.slide-in-prep .label,
+        .revenue-card-float.slide-in-prep .value {
+            transform: translateY(16px) scale(1.06);
+            opacity: 0;
+            filter: blur(4px);
+            transition: none !important;
         }
 
         .stepper-dots {
@@ -398,11 +423,13 @@
             font-size: 11px;
             font-weight: 600;
             color: var(--text-main);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .step-dot.active {
             background: var(--text-main);
             color: #fff;
+            transform: scale(1.12);
         }
 
         /* ---------------- SERVICES CARDS SECTION ---------------- */
@@ -946,6 +973,10 @@
             .modal-direct-channels {
                 grid-template-columns: 1fr;
             }
+
+            .card-metric-badge {
+                display: none;
+            }
         }
 
         @media (max-width: 600px) {
@@ -971,32 +1002,63 @@
             }
 
             .hero-container {
-                padding: 100px 16px 30px;
-                gap: 20px;
+                padding: 100px 18px 30px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero-container>div:first-child {
+                position: relative;
+                z-index: 2;
+                max-width: 82%;
+            }
+
+            .m-break {
+                display: block;
+                line-height: 1.15;
             }
 
             .hero-headline {
-                font-size: clamp(28px, 8.5vw, 40px);
-                letter-spacing: -1px;
+                font-size: clamp(30px, 9vw, 38px);
+                letter-spacing: -1.2px;
                 line-height: 1.15;
-                margin-bottom: 20px;
+                margin-bottom: 18px;
             }
 
             .hero-actions {
+                display: flex;
                 flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
+                align-items: flex-start;
+                gap: 9px;
                 width: 100%;
+                margin-top: 14px;
             }
 
             .hero-actions .btn-pill {
-                justify-content: center;
-                width: 100%;
-                padding: 12px 20px;
+                padding: 8px 18px;
+                font-size: 12.5px;
+                font-weight: 600;
+                border-radius: 25px;
+                width: fit-content;
+                justify-content: flex-start;
             }
 
             .hero-canvas-wrap {
-                height: 290px;
+                position: absolute;
+                top: 110px;
+                right: -30px;
+                width: 320px;
+                height: 330px;
+                transform: none;
+                pointer-events: none;
+                z-index: 1;
+                opacity: 0.85;
+            }
+
+            .hero-stats-bar {
+                margin-top: 35px;
+                position: relative;
+                z-index: 2;
             }
 
             .section-wrap {
@@ -1031,16 +1093,99 @@
                 font-size: 30px;
             }
 
+            /* --- TINDER-STYLE SWIPE CARD ANIMATION (MOBILE ONLY) --- */
+            .case-studies-section {
+                padding: 45px 0 65px;
+                overflow: hidden;
+            }
+
             .horizontal-slider {
-                padding: 12px 16px;
-                gap: 14px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                height: 480px;
+                width: 100%;
+                padding: 10px 16px 30px;
+                overflow: visible;
+                touch-action: pan-y;
             }
 
             .project-card {
-                flex: 0 0 84vw;
-                height: auto;
-                min-height: 380px;
-                padding: 18px;
+                position: absolute;
+                width: calc(100% - 36px);
+                max-width: 330px;
+                height: 440px;
+                padding: 22px;
+                border-radius: 28px;
+                background: #ffffff;
+                box-shadow: 0 16px 36px -10px rgba(17, 20, 26, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: pan-y;
+                will-change: transform, opacity;
+                cursor: grab;
+                transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, box-shadow 0.35s ease;
+            }
+
+            .project-card.is-swiping {
+                transition: none !important;
+                cursor: grabbing;
+            }
+
+            .project-card.is-flying {
+                transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease !important;
+                pointer-events: none;
+            }
+
+            .project-canvas-preview {
+                height: 210px;
+                border-radius: 20px;
+                background: linear-gradient(135deg, #F5F6F9 0%, #EAECEF 100%);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .project-canvas-preview::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -60%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(60deg,
+                        transparent 40%,
+                        rgba(255, 255, 255, 0.65) 50%,
+                        transparent 60%);
+                animation: dribbbleSheen 4.5s ease-in-out infinite;
+                pointer-events: none;
+            }
+
+            @keyframes dribbbleSheen {
+
+                0%,
+                60% {
+                    transform: translateX(-100%) rotate(25deg);
+                }
+
+                100% {
+                    transform: translateX(100%) rotate(25deg);
+                }
+            }
+
+            .project-canvas-preview svg {
+                animation: dribbbleSvgPop 3.5s ease-in-out infinite alternate;
+                filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.06));
+            }
+
+            @keyframes dribbbleSvgPop {
+                0% {
+                    transform: scale(0.96) rotate(-1deg);
+                }
+
+                100% {
+                    transform: scale(1.04) rotate(1.5deg);
+                }
             }
 
             footer {
@@ -1060,6 +1205,10 @@
             .modal-dialog {
                 padding: 24px 16px;
                 border-radius: 20px;
+            }
+
+            .card-metric-badge {
+                display: none;
             }
         }
 
@@ -1122,7 +1271,10 @@
             <div class="hero-top-badge">
                 <span></span> Precision Engineering Consultancy
             </div>
-            <h1 class="hero-headline">Precision Mechanical Design & Engineering Solutions</h1>
+            <h1 class="hero-headline"><span class="m-break">Precision</span> <span class="m-break">Mechanical</span>
+                <span class="m-break">Design &</span> <span class="m-break">Engineering</span> <span
+                    class="m-break">Solutions</span>
+            </h1>
             <div class="hero-actions">
                 <a href="#services" class="btn-pill btn-primary">Explore Services</a>
                 <a href="#cases" class="btn-pill btn-secondary">View Case Studies</a>
@@ -1150,7 +1302,7 @@
             </div>
 
             <div class="revenue-card-float">
-                <div class="label">Manufacturing Efficiency</div>
+                <div class="label" id="dynamic-stat-label">Manufacturing Efficiency</div>
                 <div class="value" id="dynamic-stat">98.4%</div>
                 <div class="stepper-dots">
                     <div class="step-dot active">01</div>
@@ -1694,6 +1846,245 @@
         });
 
         revealElements.forEach(el => revealObserver.observe(el));
+
+        // 6. LIQUID MAGNETIC AUTO-SLIDER FOR STAT CARD (98.4% -> 100% -> DFM)
+        const statSlides = [
+            { label: 'Manufacturing Efficiency', value: '98.4%' },
+            { label: 'Ready for Production', value: '100%' },
+            { label: 'Zero Error Flow', value: 'DFM' }
+        ];
+        let currentStatIdx = 0;
+        const statCard = document.querySelector('.revenue-card-float');
+        const statLabel = document.getElementById('dynamic-stat-label');
+        const statVal = document.getElementById('dynamic-stat');
+        const statDots = document.querySelectorAll('.stepper-dots .step-dot');
+
+        if (statCard && statVal && statLabel) {
+            setInterval(() => {
+                statCard.classList.add('slide-out');
+
+                setTimeout(() => {
+                    currentStatIdx = (currentStatIdx + 1) % statSlides.length;
+                    const next = statSlides[currentStatIdx];
+
+                    statLabel.textContent = next.label;
+                    statVal.textContent = next.value;
+
+                    statDots.forEach((dot, idx) => {
+                        dot.classList.toggle('active', idx === currentStatIdx);
+                    });
+
+                    statCard.classList.remove('slide-out');
+                    statCard.classList.add('slide-in-prep');
+
+                    void statCard.offsetWidth;
+
+                    statCard.classList.remove('slide-in-prep');
+                }, 320);
+            }, 2800);
+        }
+
+        // 7. TINDER-STYLE SWIPE CARD ANIMATION (MANUAL + ALTERNATING AUTO-SWIPE ON MOBILE)
+        function initMobileSwipeCards() {
+            const slider = document.getElementById('cases-slider');
+            if (!slider) return;
+
+            let cardStack = Array.from(slider.querySelectorAll('.project-card'));
+            let startX = 0, startY = 0, currentX = 0, currentY = 0;
+            let isDragging = false;
+            let isHorizontalSwipe = false;
+            let isAnimating = false;
+            let autoSwipeInterval = null;
+            let autoSwipeDirection = -1; // -1 = Left, 1 = Right
+
+            function updateCardPositions(animate = true) {
+                if (window.innerWidth > 600) {
+                    stopAutoSwipe();
+                    cardStack.forEach(card => {
+                        card.style.transform = '';
+                        card.style.opacity = '';
+                        card.style.zIndex = '';
+                        card.style.pointerEvents = '';
+                        card.style.transition = '';
+                    });
+                    return;
+                }
+
+                cardStack.forEach((card, i) => {
+                    card.classList.remove('is-swiping', 'is-flying');
+                    if (animate) {
+                        card.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, box-shadow 0.35s ease';
+                    } else {
+                        card.style.transition = 'none';
+                    }
+
+                    if (i === 0) {
+                        card.style.transform = 'translate3d(0, 0, 0) scale(1) rotate(0deg)';
+                        card.style.zIndex = '10';
+                        card.style.opacity = '1';
+                        card.style.pointerEvents = 'auto';
+                    } else if (i === 1) {
+                        card.style.transform = 'translate3d(0, 16px, 0) scale(0.95) rotate(0deg)';
+                        card.style.zIndex = '9';
+                        card.style.opacity = '0.9';
+                        card.style.pointerEvents = 'none';
+                    } else if (i === 2) {
+                        card.style.transform = 'translate3d(0, 32px, 0) scale(0.90) rotate(0deg)';
+                        card.style.zIndex = '8';
+                        card.style.opacity = '0.7';
+                        card.style.pointerEvents = 'none';
+                    } else {
+                        card.style.transform = 'translate3d(0, 48px, 0) scale(0.85) rotate(0deg)';
+                        card.style.zIndex = '7';
+                        card.style.opacity = '0.4';
+                        card.style.pointerEvents = 'none';
+                    }
+                });
+
+                startAutoSwipe();
+            }
+
+            function throwCard(direction, customDeltaY = 0) {
+                if (isAnimating || !cardStack[0]) return;
+                isAnimating = true;
+
+                const topCard = cardStack[0];
+                const flyX = direction * (window.innerWidth + 260);
+                const flyRot = direction * 35;
+
+                topCard.classList.remove('is-swiping');
+                topCard.classList.add('is-flying');
+                topCard.style.transform = `translate3d(${flyX}px, ${customDeltaY}px, 0) rotate(${flyRot}deg)`;
+                topCard.style.opacity = '0';
+
+                if (cardStack[1]) {
+                    cardStack[1].style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease';
+                    cardStack[1].style.transform = 'translate3d(0, 0, 0) scale(1) rotate(0deg)';
+                    cardStack[1].style.opacity = '1';
+                }
+
+                setTimeout(() => {
+                    const swiped = cardStack.shift();
+                    cardStack.push(swiped);
+                    updateCardPositions(true);
+                    isAnimating = false;
+                }, 400);
+            }
+
+            function startAutoSwipe() {
+                stopAutoSwipe();
+                if (window.innerWidth > 600) return;
+
+                autoSwipeInterval = setInterval(() => {
+                    if (window.innerWidth > 600 || isDragging || isAnimating) return;
+
+                    const rect = slider.getBoundingClientRect();
+                    if (rect.bottom > 60 && rect.top < window.innerHeight - 60) {
+                        throwCard(autoSwipeDirection);
+                        autoSwipeDirection = (autoSwipeDirection === -1) ? 1 : -1;
+                    }
+                }, 2800);
+            }
+
+            function stopAutoSwipe() {
+                if (autoSwipeInterval) {
+                    clearInterval(autoSwipeInterval);
+                    autoSwipeInterval = null;
+                }
+            }
+
+            function handleTouchStart(e) {
+                if (window.innerWidth > 600 || isAnimating) return;
+                const topCard = cardStack[0];
+                if (!topCard || !topCard.contains(e.target)) return;
+
+                stopAutoSwipe();
+
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                currentX = startX;
+                currentY = startY;
+                isDragging = true;
+                isHorizontalSwipe = false;
+                topCard.classList.add('is-swiping');
+            }
+
+            function handleTouchMove(e) {
+                if (!isDragging || window.innerWidth > 600 || isAnimating) return;
+                const touch = e.touches[0];
+                currentX = touch.clientX;
+                currentY = touch.clientY;
+                const deltaX = currentX - startX;
+                const deltaY = currentY - startY;
+
+                if (!isHorizontalSwipe) {
+                    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 8) {
+                        isHorizontalSwipe = true;
+                    } else if (Math.abs(deltaY) > 12) {
+                        isDragging = false;
+                        if (cardStack[0]) cardStack[0].classList.remove('is-swiping');
+                        startAutoSwipe();
+                        return;
+                    }
+                }
+
+                if (isHorizontalSwipe) {
+                    if (e.cancelable) e.preventDefault();
+                    const topCard = cardStack[0];
+                    const rot = deltaX * 0.09;
+                    topCard.style.transform = `translate3d(${deltaX}px, ${deltaY * 0.25}px, 0) rotate(${rot}deg)`;
+
+                    if (cardStack[1]) {
+                        const progress = Math.min(Math.abs(deltaX) / 160, 1);
+                        const nextScale = 0.95 + 0.05 * progress;
+                        const nextY = 16 - 16 * progress;
+                        cardStack[1].style.transform = `translate3d(0, ${nextY}px, 0) scale(${nextScale}) rotate(0deg)`;
+                        cardStack[1].style.opacity = `${0.9 + 0.1 * progress}`;
+                    }
+                }
+            }
+
+            function handleTouchEnd() {
+                if (!isDragging || window.innerWidth > 600 || isAnimating) {
+                    startAutoSwipe();
+                    return;
+                }
+                isDragging = false;
+                const topCard = cardStack[0];
+                if (!topCard) {
+                    startAutoSwipe();
+                    return;
+                }
+
+                const deltaX = currentX - startX;
+
+                if (isHorizontalSwipe && Math.abs(deltaX) > 65) {
+                    const direction = deltaX > 0 ? 1 : -1;
+                    autoSwipeDirection = (direction === 1) ? -1 : 1;
+                    throwCard(direction, (currentY - startY) * 0.12);
+                } else {
+                    topCard.classList.remove('is-swiping');
+                    updateCardPositions(true);
+                }
+
+                isHorizontalSwipe = false;
+                startAutoSwipe();
+            }
+
+            slider.addEventListener('touchstart', handleTouchStart, { passive: false });
+            slider.addEventListener('touchmove', handleTouchMove, { passive: false });
+            slider.addEventListener('touchend', handleTouchEnd);
+            slider.addEventListener('touchcancel', handleTouchEnd);
+
+            window.addEventListener('resize', () => {
+                updateCardPositions(false);
+            });
+
+            updateCardPositions(false);
+        }
+
+        initMobileSwipeCards();
     </script>
 </body>
 
